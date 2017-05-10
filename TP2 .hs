@@ -1,8 +1,9 @@
 import Text.Show.Functions
+import Data.List
 type Bebida = Cliente->Cliente
 type Acciones = Cliente->Cliente 
 data Cliente = Cliente {nombre::String, resistencia::Int, amigos::[Cliente],bebidas::[Bebida]} deriving (Show)
-data Intinerario = Intinerario{horas::Float, acciones::[Acciones]}
+data Intinerario = Intinerario{horas::Float, acciones::[Acciones]} deriving (Show)
 
 --Decidimos utilizar este tipo de dato "data" porque es más declarativo e intuitivo que el tipo de data tuplas, y además 
 --cualquier persona que lea el tipo de dato, puede identificar a que tipo de dato corresponde cada elemento de la "data Cliente".
@@ -76,4 +77,11 @@ rescatarse horas
 itinerario (Intinerario h  (f:fs)) cliente = itinerario (Intinerario h  (fs)) (f cliente)
 itinerario (Intinerario _  [] )cliente = cliente
 
---calcularIntensidad itinerario = length (acciones itinerario) / horas itinerario
+calcularIntensidad itinerario = genericLength (acciones itinerario) / horas itinerario
+
+itineraioMasIntenso (f1:f2:fs)  | calcularIntensidad f1 > calcularIntensidad f2 = itineraioMasIntenso (f1:fs)
+                                | otherwise = itineraioMasIntenso (f2:fs)
+
+itineraioMasIntenso [masInt] = masInt
+
+elegirMasIntenso (f1:f2:fs) cliente = itinerario (itineraioMasIntenso (f1:f2:fs)) cliente
